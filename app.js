@@ -49,6 +49,26 @@ app.get('/todos/:id', (req, res) => {
     .catch(err => console.error(err))
 })
 
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  Todo.findById(id)
+    .lean()
+    .then(todo => res.render('edit', {todo}))
+    .catch(err => console.error(err))
+})
+
+app.post('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  const name = req.body.name
+  Todo.findById(id)
+    .then(todo => {
+      todo.name = name
+      todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
+    .catch(err => console.error(err))
+})
+
 app.listen(3000, () => {
   console.log('The server is running on htpp://localhost:3000')
 })
