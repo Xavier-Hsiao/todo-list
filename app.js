@@ -1,5 +1,9 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.urlencoded({ extended: true }))
+
 const mongoose = require('mongoose')
 
 mongoose.connect('mongodb://localhost:27017/todo-list')
@@ -23,6 +27,17 @@ app.get('/', (req, res) => {
   Todo.find() //取出所有todo資料
     .lean() //將 Mongoose物件轉換成 JavaScrript陣列，這樣就不會再有save()之類的 Mongoose方法
     .then(todos => res.render('index', {todos}))
+    .catch(err => console.error(err))
+})
+
+app.get('/todos/new', (req, res) => {
+  res.render('new')
+})
+
+app.post('/todos', (req, res) => {
+  const name = req.body.name
+  Todo.create({name})
+    .then(() => res.redirect('/'))
     .catch(err => console.error(err))
 })
 
