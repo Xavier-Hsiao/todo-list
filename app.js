@@ -35,9 +35,17 @@ app.get('/todos/new', (req, res) => {
 })
 
 app.post('/todos', (req, res) => {
-  const name = req.body.name
-  Todo.create({name})
+  const name = req.body.name //將使用者透過表單輸入的資料存進變數 name
+  Todo.create({name}) //將資料傳給 model，透過 Mongoose提供的方法新增 instance並請求存入資料庫；資料庫回傳結果後，model檢查是否成成功，再回報給controller。 
     .then(() => res.redirect('/'))
+    .catch(err => console.error(err))
+})
+
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  Todo.findById(id)
+    .lean()
+    .then(todo => res.render('detail', {todo}))
     .catch(err => console.error(err))
 })
 
