@@ -18,10 +18,11 @@ mongoose.connect('mongodb://localhost:27017/todo-list')
 const Todo = require('./models/todo')
 
 const exphbs = require('express-handlebars')
-
 app.engine('hbs', exphbs({defaultLayout: 'main', extname: 'hbs'}))
 app.set('view engine', 'hbs')
 
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
   Todo.find() //取出所有todo資料
@@ -58,7 +59,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(err => console.error(err))
 })
 
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const {name, isDone} = req.body
   Todo.findById(id)
@@ -76,7 +77,7 @@ app.post('/todos/:id/edit', (req, res) => {
     .catch(err => console.error(err))
 })
 
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   Todo.findById(id)
     .then(todo => todo.remove())
