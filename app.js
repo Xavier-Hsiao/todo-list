@@ -24,6 +24,9 @@ app.set('view engine', 'hbs')
 const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
+const routes = require('./routes/index')
+app.use(routes)
+
 app.get('/', (req, res) => {
   Todo.find() //取出所有todo資料
     .lean() //將 Mongoose物件轉換成 JavaScrript陣列，這樣就不會再有save()之類的 Mongoose方法
@@ -32,58 +35,6 @@ app.get('/', (req, res) => {
     .catch(err => console.error(err))
 })
 
-app.get('/todos/new', (req, res) => {
-  res.render('new')
-})
-
-app.post('/todos', (req, res) => {
-  const name = req.body.name //將使用者透過表單輸入的資料存進變數 name
-  Todo.create({name}) //將資料傳給 model，透過 Mongoose提供的方法新增 instance並請求存入資料庫；資料庫回傳結果後，model檢查是否成成功，再回報給controller。 
-    .then(() => res.redirect('/'))
-    .catch(err => console.error(err))
-})
-
-app.get('/todos/:id', (req, res) => {
-  const id = req.params.id
-  Todo.findById(id)
-    .lean()
-    .then(todo => res.render('detail', {todo}))
-    .catch(err => console.error(err))
-})
-
-app.get('/todos/:id/edit', (req, res) => {
-  const id = req.params.id
-  Todo.findById(id)
-    .lean()
-    .then(todo => res.render('edit', {todo}))
-    .catch(err => console.error(err))
-})
-
-app.put('/todos/:id', (req, res) => {
-  const id = req.params.id
-  const {name, isDone} = req.body
-  Todo.findById(id)
-    .then(todo => {
-      todo.name = name
-      todo.isDone = isDone === 'on'
-      // if(isDone === 'on') {
-      //   todo.isDone = true
-      // } else {
-      //   todo.isDone = false
-      // }
-      todo.save()
-    })
-    .then(() => res.redirect(`/todos/${id}`))
-    .catch(err => console.error(err))
-})
-
-app.delete('/todos/:id', (req, res) => {
-  const id = req.params.id
-  Todo.findById(id)
-    .then(todo => todo.remove())
-    .then(() => res.redirect('/'))
-    .catch(err => console.error(err))
-})
 
 app.listen(3000, () => {
   console.log('The server is running on htpp://localhost:3000')
