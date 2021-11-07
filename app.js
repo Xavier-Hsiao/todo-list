@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
+const Port = process.env.Port || 3000 // 如果在 Heroku 環境則使用 process.env.PORT，否則使用本地3000
 
 const routes = require('./routes/index')
 require('./config/mongoose')
@@ -25,6 +26,6 @@ app.get('/', (req, res) => {
 })
 
 
-app.listen(3000, () => {
-  console.log('The server is running on htpp://localhost:3000')
+app.listen(Port, () => {
+  console.log(`The server is running on htpp://localhost:${Port}`)
 })
